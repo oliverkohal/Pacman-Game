@@ -124,6 +124,110 @@ const DIRECTIONS = {
     DOWN: [0, 1]
 };
 
+// Add these touch event handlers after your existing keyboard event handlers
+
+// Touch controls for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+// Minimum swipe distance to register a swipe
+const MIN_SWIPE_DISTANCE = 50;
+
+// Touch start event
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Prevent scrolling
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+});
+
+// Touch end event
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault(); // Prevent scrolling
+    const touch = e.changedTouches[0];
+    touchEndX = touch.clientX;
+    touchEndY = touch.clientY;
+    
+    handleSwipe();
+});
+
+// Handle swipe gestures
+function handleSwipe() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    
+    // Check if the swipe distance is significant enough
+    if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE && Math.abs(deltaY) < MIN_SWIPE_DISTANCE) {
+        return; // Not a significant swipe
+    }
+    
+    // Determine swipe direction based on which delta is larger
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0) {
+            pacman.nextDir = 'RIGHT';
+        } else {
+            pacman.nextDir = 'LEFT';
+        }
+    } else {
+        // Vertical swipe
+        if (deltaY > 0) {
+            pacman.nextDir = 'DOWN';
+        } else {
+            pacman.nextDir = 'UP';
+        }
+    }
+}
+
+// Optional: Add touch move to prevent scrolling during gameplay
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // Prevent page scrolling while playing
+});
+
+// Optional: Add on-screen directional buttons for alternative control
+// You can add this HTML to your page:
+/*
+<div id="mobileControls" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: none;">
+    <div style="text-align: center; margin-bottom: 10px;">
+        <button id="upBtn" style="width: 60px; height: 60px; font-size: 20px;">↑</button>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 10px;">
+        <button id="leftBtn" style="width: 60px; height: 60px; font-size: 20px;">←</button>
+        <button id="rightBtn" style="width: 60px; height: 60px; font-size: 20px;">→</button>
+    </div>
+    <div style="text-align: center; margin-top: 10px;">
+        <button id="downBtn" style="width: 60px; height: 60px; font-size: 20px;">↓</button>
+    </div>
+</div>
+*/
+
+// JavaScript for the optional on-screen buttons
+function setupMobileButtons() {
+    // Show mobile controls on touch devices
+    if ('ontouchstart' in window) {
+        const mobileControls = document.getElementById('mobileControls');
+        if (mobileControls) {
+            mobileControls.style.display = 'block';
+        }
+    }
+    
+    // Button event listeners
+    const upBtn = document.getElementById('upBtn');
+    const downBtn = document.getElementById('downBtn');
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
+    
+    if (upBtn) upBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pacman.nextDir = 'UP'; });
+    if (downBtn) downBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pacman.nextDir = 'DOWN'; });
+    if (leftBtn) leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pacman.nextDir = 'LEFT'; });
+    if (rightBtn) rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pacman.nextDir = 'RIGHT'; });
+}
+
+// Call this function after your window.onload
+// setupMobileButtons();
+
 // Find the current starting position
 let startPos = findCenterCorridorCell();
 // Move diagonally down-left
