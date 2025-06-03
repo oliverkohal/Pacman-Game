@@ -126,10 +126,10 @@ const DIRECTIONS = {
 
 // Find the current starting position
 let startPos = findCenterCorridorCell();
-// Move diagonally up-left
-let adjustedPos = [startPos[0] - 1, startPos[1] - 1];
+// Move diagonally down-left
+let adjustedPos = [startPos[0] - 1, startPos[1] + 1];
 
-// Pacman state - start diagonally up-left from center corridor
+// Pacman state - start diagonally down-left from center corridor
 let pacman = {
     pos: adjustedPos,
     dir: 'LEFT',
